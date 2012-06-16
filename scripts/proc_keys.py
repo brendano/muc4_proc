@@ -12,6 +12,9 @@ from pprint import pprint
 def cleankey(keystr):
     return re.sub(r'[^A-Z]+', '_', keystr).strip('_').lower()
 
+def clean_docid(value):
+    return re.sub(r'\s*\(.*$','', value)
+
 ALL_KEYS = """
 MESSAGE: ID
 MESSAGE: TEMPLATE
@@ -63,8 +66,8 @@ def warning(s):
 def yield_keyvals(chunk):
     """
     Processes the raw MUC "key file" format.  Parses one entry ("chunk").
-    Yields a sequence of (key,value) pairs,
-        where a key is a tuple of strings (usually a pair).
+    Yields a sequence of (key,value) pairs.
+    A single key can be repeated many times.
     This function cleans up key names, but passes the values through as-is.
     """
     curkey = None
@@ -84,11 +87,11 @@ def yield_keyvals(chunk):
 
         yield curkey, valtext
 
-def clean_docid(value):
-    return re.sub(r'\s*\(.*$','', value)
-
 def parse_values(keyvals):
-    # Filter down to the slots we want, and parse their values as well.
+    """
+    Takes key,value pairs as input, where the values are unparsed.
+    Filter down to the slots we want, and parse their values as well.
+    """
     for key,value in keyvals:
         if key=='message_id':
             yield key, clean_docid(value)
