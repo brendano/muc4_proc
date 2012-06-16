@@ -185,16 +185,12 @@ def test_parsestrings():
     assert set(f(s)) == {"CAR DEALERSHIP"}
     s = '"TUPAC AMARU REVOLUTIONARY MOVEMENT" / "MRTA"'
     assert set(f(s)) == {"TUPAC AMARU REVOLUTIONARY MOVEMENT","MRTA"}
-def test_parsevalues():
-    s = '"U.S. JOURNALIST": "BERNARDETTE PARDO"'
-    assert set(f(s)) == {"U.S. JOURNALIST", "BERNARDETTE PARDO"}
 
-def dump_compare(keyvals1,keyvals2):
-    for (key,val1),(_,val2) in zip(keyvals1, keyvals2):
-        print key
-        print "  orig |", val1
-        if val1 != val2:
-            print "  new  |", val2
+def test_parse_one_value():
+    s = '"U.S. JOURNALIST": "BERNARDETTE PARDO"'
+    d = parse_one_value(s)
+    assert d['strings_lhs'] == ["U.S. JOURNALIST"]
+    assert d['strings_rhs'] == ["BERNARDETTE PARDO"]
 
 def fancy_json_print(keyvals):
     lines = [ json.dumps(kv, sort_keys=True) for kv in keyvals ]
